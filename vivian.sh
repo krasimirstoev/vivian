@@ -165,36 +165,6 @@ function mysql_clean(){
 	fi
 }
 
-	######
-	#
-	# the file enc_password_hiden are encrypted with blowfish.
-	# inside is hidden our password, named as a soup.
-	# this file will be created every time before encryption
-	# and will be deleted after that.
-	#
-	# to prevent bus-factor situation only Berlioz and Borislav
-	# will know what is the secret.
-	#
-	######
-
-function encryption_file_create(){
-
-	# this function will create the encryption file
-	cd $vivian_root
-	touch $vivian_encryption_file
-	echo $encryption_password > $vivian_encryption_file
-	log "The encryption file is created."
-
-}
-
-function encryption_file_destroy(){
-
-	# this function will destroy the encryption file
-	rm -f $vivian_encryption_file
-	log "The encryption file was deleted."
-
-}
-
 function mysql_encrypt(){
 
 	# firstly check if we have some backups in localbkp directory
@@ -398,6 +368,18 @@ function my_decrypt() {
 	encryption_file_create
 	openssl aes-256-cbc -d -in $infile -out $outfile -pass file:$vivian_encryption_file
 	encryption_file_destroy
+}
+
+# this function will create the encryption file
+function encryption_file_create(){
+	echo $encryption_password > $vivian_encryption_file
+	log "The encryption file is created."
+}
+
+# this function will destroy the encryption file
+function encryption_file_destroy(){
+	rm -f $vivian_encryption_file
+	log "The encryption file was deleted."
 }
 
 function backup_files(){
