@@ -446,63 +446,24 @@ function backup_files(){
 	fi
 }
 
-function rsync_to_master(){
+function rsync_to_storage(){
 
 	# create master key
 	master_key_create
 
 	cd $vivian_root
 
-	# create needed directory on remote server
-	#ssh ssh -p $backup_master_port -i master_key $backup_username@$backup_master "mkdir -p $vivian_remote_storage"
+	host=$1
+	port=$2
 
 	# let's move databases
-	rsync -avz --progress -e "ssh -p $backup_master_port -i master_key" ${vivian_localbkp}*.pi $backup_username@$backup_master:$vivian_remote_storage
+	rsync -avz --progress -e "ssh -p $port -i $backup_key" ${vivian_localbkp}*.pi $host:$vivian_remote_storage
 
 	# if we have any files, we will move them
-
-	if [ -d "$vivian_localbkp_files" ];
-
-	then
-
-		rsync -avz --progress -e "ssh -p $backup_master_port -i master_key" ${vivian_localbkp_files} $backup_username@$backup_master:$vivian_remote_storage_files
-
+	if [ -d "$vivian_localbkp_files" ]; then
+		rsync -avz --progress -e "ssh -p $port -i $backup_key" ${vivian_localbkp_files} $host:$vivian_remote_storage_files
 	else
-
 		log "We don't have files for backup. Skip."
-
-	fi
-
-	# delete master key
-	master_key_destroy
-
-}
-
-function rsync_to_secondary(){
-
-	# create master key
-	master_key_create
-
-	cd $vivian_root
-
-	# create needed directory on remote server
-	##ssh ssh -p $backup_secondary_port -i master_key $backup_username@$backup_secondary "mkdir -p $vivian_remote_storage"
-
-	# let's move databases
-	rsync -avz --progress -e "ssh -p $backup_secondary_port -i master_key" ${vivian_localbkp}*.pi $backup_username@$backup_secondary:$vivian_remote_storage
-
-	# if we have any files, we will move them
-
-	if [ -d "$vivian_localbkp_files" ];
-
-	then
-
-	rsync -avz --progress -e "ssh -p $backup_secondary_port -i master_key" ${vivian_localbkp_files} $backup_username@$backup_secondary:$vivian_remote_storage_files
-
-	else
-
-		log "We don't have files for backup. Skip."
-
 	fi
 
 	# delete master key
@@ -518,10 +479,10 @@ case "$1" in
 		mysql_encrypt
 	;;
 	--rsync-master)
-		rsync_to_master
+		rsync_to_storage "$backup_username@$backup_master" $backup_master_port
 	;;
 	--rsync-secondary)
-		rsync_to_secondary
+		rsync_to_storage "$backup_username@$backup_secondary" $backup_secondary_port
 	;;
 	--localbkp-clear)
 		localbkp_clear
