@@ -274,9 +274,7 @@ function mysql_encrypt(){
 
 	for i in $pure_databases_list
 	do
-
-		openssl aes-256-cbc -in $i -out $i.pi -pass file:$vivian_encryption_file
-
+		my_encrypt $i
 	done
 
 	log "All unencrypted databases are now secured."
@@ -351,7 +349,7 @@ function localbkp_encrypt(){
 
 	cd $vivian_localbkp
 
-	openssl aes-256-cbc -in $current_date-$this_server-localbkp.tar.gz -out $current_date-$this_server-localbkp.tar.gz.pi -pass file:$vivian_encryption_file
+	my_encrypt $current_date-$this_server-localbkp.tar.gz
 
 	log "Custom archive of localbkp was created and secured"
 
@@ -380,17 +378,7 @@ function restore_decrypt(){
 
 	for i in $encrypted_databases_list
 	do
-
-		openssl aes-256-cbc -d -in $i -out $i.fin -pass file:$vivian_encryption_file
-
-	done
-
-	# rename all .sql.pi to .sql
-	for all_files in *.sql.pi.fin;
-	do
-
-		mv "$all_files" "`basename "$all_files" .sql.pi.fin`.sql"
-
+		my_decrypt $i
 	done
 
 	# delete the crypto file
@@ -417,6 +405,18 @@ function master_key_destroy(){
 	# delete master_key
 	rm -f $backup_key
 	log "The master key was deleted"
+}
+
+function my_encrypt() {
+	infile=$1
+	outfile=$infile.pi
+	openssl aes-256-cbc -in $infile -out $outfile -pass file:$vivian_encryption_file
+}
+
+function my_decrypt() {
+	infile=$1
+	outfile=${infile/.pi/}
+	openssl aes-256-cbc -d -in $infile -out $outfile -pass file:$vivian_encryption_file
 }
 
 function backup_files(){
