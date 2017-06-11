@@ -405,7 +405,7 @@ function master_key_create(){
 
 	# let's create our key for rsync
 
-	echo $backup_private_key > $backup_key
+	echo "$backup_private_key" > $backup_key
 
 	chmod 600 $backup_key
 	log "The master key is created"
