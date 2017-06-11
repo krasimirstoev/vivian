@@ -106,6 +106,12 @@ function log (){
 
 }
 
+function send_mail() {
+	subject=$1
+	content=$2
+	echo $content | mail -a "Content-Type: text/plain; charset=UTF-8" -s $subject $monitoring_email
+}
+
 function vivian_clear_logs(){
 
 	# this function will clear vivian logs
@@ -126,8 +132,7 @@ function mysql_clean(){
 
 	# if we have some backups, interupt the proccess
 	log "Error! We have backups for today. Exit!"
-	echo "The backup for $current_date already exist! Check server vivian, system logs and monitoring services." | mail -a "Content-Type: text/plain; charset=UTF-8" \
-	 -s "$this_server: problem with vivian backups for $current_date" $monitoring_email
+	send_mail "$this_server: problem with vivian backups for $current_date" "The backup for $current_date already exist! Check server vivian, system logs and monitoring services."
 
 	$vivian_mon_status_error > $vivian_logs_mon
 
@@ -158,8 +163,7 @@ function mysql_clean(){
 	done
 
 	log "The databases are exported."
-	echo "The backups (unsecured) for $current_date are generated." | mail -a "Content-Type: text/plain; charset=UTF-8" \
-	-s "$this_server: backups for $current_date are generated" $monitoring_email
+	send_mail "$this_server: backups for $current_date are generated" "The backups (unsecured) for $current_date are generated."
 	$vivian_mon_status_ok > $vivian_logs_mon
 
 	fi
@@ -177,8 +181,7 @@ function mysql_encrypt(){
 
 	log "Error! We have backups for today. Exit!"
 
-	echo "The backup for $current_date already exist! Check server vivian, system logs and monitoring services." | mail -a "Content-Type: text/plain; charset=UTF-8" \
-	 -s "$this_server: problem with vivian backups for $current_date" $monitoring_email
+	send_mail "$this_server: problem with vivian backups for $current_date" "The backup for $current_date already exist! Check server vivian, system logs and monitoring services."
 
 	$vivian_mon_status_error > $vivian_logs_mon
 
@@ -208,8 +211,7 @@ function mysql_encrypt(){
 	done
 
 	log "The databases are exported but not encrypted."
-	echo "The backups for $current_date are generated and secured." | mail -a "Content-Type: text/plain; charset=UTF-8" \
-	-s "$this_server: backups for $current_date are generated" $monitoring_email
+	send_mail "$this_server: backups for $current_date are generated" "The backups for $current_date are generated and secured."
 	$vivian_mon_status_ok > $vivian_logs_mon
 
 	fi
@@ -311,8 +313,7 @@ function localbkp_encrypt(){
 	# delete the archive
 	rm -f $current_date-$this_server-localbkp.tar.gz
 
-	echo "Log into server and check this backup. If folder isn't empty, the regular backup will fail." | mail -a "Content-Type: text/plain; charset=UTF-8" \
-        -s "$this_server: custom localbkp was created and secured" $monitoring_email
+	send_mail "$this_server: custom localbkp was created and secured" "Log into server and check this backup. If folder isn't empty, the regular backup will fail."
 
 }
 
