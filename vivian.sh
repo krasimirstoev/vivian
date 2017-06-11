@@ -471,40 +471,42 @@ function rsync_to_storage(){
 
 }
 
-case "$1" in
-	--mysql-clean)
+for arg in "$@"; do
+case "$arg" in
+	--mysql-clean|mysql-clean)
 		mysql_clean
 	;;
-	--mysql-encrypt)
+	--mysql-encrypt|mysql-encrypt)
 		mysql_encrypt
 	;;
-	--rsync-master)
+	--rsync-master|rsync-master)
 		rsync_to_storage "$backup_username@$backup_master" $backup_master_port
 	;;
-	--rsync-secondary)
+	--rsync-secondary|rsync-secondary)
 		rsync_to_storage "$backup_username@$backup_secondary" $backup_secondary_port
 	;;
-	--localbkp-clear)
+	--localbkp-clear|localbkp-clear)
 		localbkp_clear
 	;;
-	--localbkp-check)
+	--localbkp-check|localbkp-check)
 		localbkp_check
 	;;
-	--localbkp-encrypt)
+	--localbkp-encrypt|localbkp-encrypt)
 		localbkp_encrypt
 	;;
-	--restore-decrypt)
+	--restore-decrypt|restore-decrypt)
 		restore_decrypt
 	;;
-	--restore-clear)
+	--restore-clear|restore-clear)
 		restore_clear
 	;;
-	--files)
+	--files|restore-clear)
 		backup_files
 	;;
-	--clear-logs)
+	--clear-logs|clear-logs)
 		vivian_clear_logs
 	;;
 	*)
 		show_help
 esac
+done
