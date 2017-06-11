@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Nagios exit codes
+nagios_ok=0
+nagios_warn=1
+nagios_error=2
+nagios_unknown=3
+nagios_dependent=4
+
+# log file
+localbkp_log_file=`dirname $0`/../logs/localbkp
+
+# expected content
+log_content_ok="LOCALBKP_IS_EMPTY"
+log_content_warning=""
+log_content_critical="LOCALBKP_IS_NOT_EMPTY"
+
+
+	STATUS=$(/bin/cat $localbkp_log_file)
+	LABEL="| ${LBL}=${STATUS};$WARNLEVEL;$CRITLEVEL;0;"
+
+	if [ "$STATUS" == "$log_content_ok" ];then
+        	echo "OK - $STATUS. Next backup can be started."
+        	exit $OK
+	fi
+
+	if [ "$STATUS" == "$log_content_warning" ];then
+        	echo "WARNING - $STATUS"
+        	exit $WARN
+	fi
+	if [ "$STATUS" == "$log_content_critical" ];then
+        	echo "CRITICAL - localbkp status: $STATUS. This will break next backup."
+        	exit $ERROR
+	fi
+
+	echo "UNKNOWN ERROR status ($STATUS)!"
+	exit $UNKNOWN
