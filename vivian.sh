@@ -197,10 +197,6 @@ function encryption_file_destroy(){
 
 function mysql_encrypt(){
 
-	encryption_file_create
-
-	log "The crypto file was created."
-
 	# firstly check if we have some backups in localbkp directory
 
 	if find "$vivian_localbkp" -mindepth 1 -print -quit | grep -q .;
@@ -215,10 +211,6 @@ function mysql_encrypt(){
 	 -s "$this_server: problem with vivian backups for $current_date" $monitoring_email
 
 	$vivian_mon_status_error > $vivian_logs_mon
-
-	encryption_file_destroy
-
-	log "After the backup failure, the crypto file was deleted."
 
 	sleep 2
 
@@ -283,10 +275,6 @@ function mysql_encrypt(){
 
 	rm -f ${vivian_localbkp}*.sql
 
-	# delete the encryption file
-
-	encryption_file_destroy
-
 }
 
 function localbkp_clear(){
@@ -333,9 +321,6 @@ function localbkp_encrypt(){
 	# if we have some files in localbkp this function will
 	# generate localbkp.tar.gz and will encrypt this file
 
-	# first of all, we will create the crypto file
-	encryption_file_create
-
 	# when the file is created, let's create localbkp.tar.gz
 	# and move it to localbkp/
 
@@ -356,8 +341,6 @@ function localbkp_encrypt(){
 	# delete the archive
 	rm -f $current_date-$this_server-localbkp.tar.gz
 
-	encryption_file_destroy
-
 	echo "Log into server and check this backup. If folder isn't empty, the regular backup will fail." | mail -a "Content-Type: text/plain; charset=UTF-8" \
         -s "$this_server: custom localbkp was created and secured" $monitoring_email
 
@@ -368,9 +351,6 @@ function restore_decrypt(){
 	# this function will restore all encrypted databases
 	# in $vivian_restore folder
 
-	# create the crypto file
-	encryption_file_create
-
 	cd $vivian_restore
 
 	# get all files and do decryption
@@ -380,9 +360,6 @@ function restore_decrypt(){
 	do
 		my_decrypt $i
 	done
-
-	# delete the crypto file
-	encryption_file_destroy
 
 	# delete all encrypted files
 	rm -f ${vivian_restore}*.sql.pi
@@ -410,13 +387,17 @@ function master_key_destroy(){
 function my_encrypt() {
 	infile=$1
 	outfile=$infile.pi
+	encryption_file_create
 	openssl aes-256-cbc -in $infile -out $outfile -pass file:$vivian_encryption_file
+	encryption_file_destroy
 }
 
 function my_decrypt() {
 	infile=$1
 	outfile=${infile/.pi/}
+	encryption_file_create
 	openssl aes-256-cbc -d -in $infile -out $outfile -pass file:$vivian_encryption_file
+	encryption_file_destroy
 }
 
 function backup_files(){
