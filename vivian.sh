@@ -124,16 +124,18 @@ function dump_mysql_databases() {
 	# list all databases. exclude some meta.
 	databases=`mysql --user=$vivian_mysql_username --password=$vivian_mysql_password -e "SHOW DATABASES" | grep -E -v "^(Database|information_schema|mysql|performance_schema|phpmyadmin)$"`
 
+	storage_dir=$1
 	# dump databases
 	for db in $databases; do
 		log "Dumping database: $db"
-		mysqldump --force --opt --user=$vivian_mysql_username --password=$vivian_mysql_password --databases $db | gzip > $vivian_localbkp/$current_date-$db.sql.gz
+		mysqldump --force --opt --user=$vivian_mysql_username --password=$vivian_mysql_password --databases $db | gzip > $storage_dir/$current_date-$db.sql.gz
 	done
 }
 
 function mysql_clean(){
 
-	dump_mysql_databases
+	storage_dir=$1
+	dump_mysql_databases $storage_dir
 
 	log "The databases are exported."
 	send_mail "$this_server: backups for $current_date are generated" "The backups (unsecured) for $current_date are generated."
@@ -143,7 +145,8 @@ function mysql_clean(){
 
 function mysql_encrypt(){
 
-	dump_mysql_databases
+	storage_dir=$1
+	dump_mysql_databases $storage_dir
 
 	log "The databases are exported but not encrypted."
 	send_mail "$this_server: backups for $current_date are generated" "The backups for $current_date are generated and secured."
@@ -165,7 +168,7 @@ function mysql_encrypt(){
 	#
 	###
 
-	find $vivian_localbkp -name "*.sql.gz" -exec encrypt_file {} \; -delete
+	find $storage_dir -name "*.sql.gz" -exec encrypt_file {} \; -delete
 
 	log "All unencrypted databases are now secured."
 
@@ -239,10 +242,10 @@ function localbkp_encrypt(){
 
 }
 
-# this function will restore all encrypted databases in $vivian_restore folder
+# restore all encrypted files in a given directory
 function restore_decrypt(){
 	# get all files and do decryption
-	find $vivian_restore -name "*.pi" -exec decrypt_file {} \; -delete
+	find $1 -name "*.pi" -exec decrypt_file {} \; -delete
 }
 
 function master_key_create(){
@@ -348,10 +351,10 @@ function rsync_to_storage(){
 for arg in "$@"; do
 case "$arg" in
 	--mysql-clean|mysql-clean)
-		mysql_clean
+		mysql_clean $vivian_localbkp
 	;;
 	--mysql-encrypt|mysql-encrypt)
-		mysql_encrypt
+		mysql_encrypt $vivian_localbkp
 	;;
 	--rsync-master|rsync-master)
 		rsync_to_storage "$backup_username@$backup_master" $backup_master_port
@@ -369,7 +372,7 @@ case "$arg" in
 		localbkp_encrypt
 	;;
 	--restore-decrypt|restore-decrypt)
-		restore_decrypt
+		restore_decrypt $vivian_restore
 	;;
 	--restore-clear|restore-clear)
 		restore_clear
