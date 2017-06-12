@@ -129,10 +129,8 @@ function dump_mysql_databases() {
 
 	# dump databases
 	for db in $databases; do
-		if [[ "$db" != "information_schema" ]] && [[ "$db" != _* ]] ; then
-			log "Dumping database: $db"
-			mysqldump --force --opt --user=$vivian_mysql_username --password=$vivian_mysql_password --databases $db > $vivian_localbkp/$current_date-$db.sql
-		fi
+		log "Dumping database: $db"
+		mysqldump --force --opt --user=$vivian_mysql_username --password=$vivian_mysql_password --databases $db > $vivian_localbkp/$current_date-$db.sql
 	done
 }
 
@@ -405,7 +403,7 @@ case "$arg" in
 	--restore-clear|restore-clear)
 		restore_clear
 	;;
-	--files|restore-clear)
+	--files|files)
 		backup_files
 	;;
 	--clear-logs|clear-logs)
