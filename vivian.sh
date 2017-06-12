@@ -248,24 +248,6 @@ function restore_decrypt(){
 	find $1 -name "*.pi" -exec decrypt_file {} \; -delete
 }
 
-function master_key_create(){
-
-	# let's create our key for rsync
-
-	echo "$backup_private_key" > $backup_key
-
-	chmod 600 $backup_key
-	log "The master key is created"
-
-}
-
-function master_key_destroy(){
-
-	# delete master_key
-	rm -f $backup_key
-	log "The master key was deleted"
-}
-
 function encrypt_file() {
 	infile=$1
 	outfile=$infile.pi
@@ -325,8 +307,7 @@ function backup_files(){
 
 function rsync_to_storage(){
 
-	# create master key
-	master_key_create
+	rsync_key_create
 
 	cd $vivian_root
 
@@ -343,10 +324,21 @@ function rsync_to_storage(){
 		log "We don't have files for backup. Skip."
 	fi
 
-	# delete master key
-	master_key_destroy
+	rsync_key_destroy
+}
+
+function rsync_key_create(){
+	echo "$backup_private_key" > $backup_key
+	chmod 600 $backup_key
+	log "The master key is created"
 
 }
+
+function rsync_key_destroy(){
+	rm -f $backup_key
+	log "The master key was deleted"
+}
+
 
 for arg in "$@"; do
 case "$arg" in
