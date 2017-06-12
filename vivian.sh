@@ -37,11 +37,6 @@ monitoring_email="monitoring@example.com"
 source $vivian_root/.env
 
 
-# colors
-c_red="\033[1;31m"
-c_green="\033[1;32m"
-c_reset="\033[0m"
-
 # some globals
 this_server=`hostname`
 current_date=`date +%Y%m%d-%H%M`
@@ -73,27 +68,7 @@ vivian_mon_status_error="echo TODAY_ARCHIVE_EXISTS"
 vivian_mon_status_localbkp_error="echo LOCALBKP_IS_NOT_EMPTY"
 vivian_mon_status_localbkp_ok="echo LOCALBKP_IS_EMPTY"
 
-function show_help(){
-
-	# Help section
-
-	echo "Available options:"
-	echo
-	echo
-	echo -e "${c_green}--mysql-clean${c_reset}		- will dump all MySQL databases ${c_red}wthout${c_reset} encryption step"
-	echo -e "${c_green}--mysql-encrypt${c_reset}		- will dump all MySQL database and will ${c_red}encrypt${c_reset} them"
-	echo -e "${c_green}--rsync-master${c_reset}		- will rsync databases to the ${c_red}main${c_reset} backup server"
-	echo -e "${c_green}--rsync-secondary${c_reset}  	- will rsync databases to the ${c_red}secondary${c_reset} backup server"
-	echo -e "${c_green}--localbkp-clear${c_reset}		- with this you can clear ${c_red}localbkp${c_reset} directory"
-	echo -e "${c_green}--lokalbkp-check${c_reset}		- will check ${c_red}localbkp${c_reset} directory and will print if there are any files"
-	echo -e "${c_green}--localbkp-encrypt${c_reset} 	- if you have custom files in ${c_red}localbkp${c_reset} directory, with this function you can encrypt them"
-	echo -e "${c_green}--restore-decrypt${c_reset}    	- decrypt all files in ${c_red}restore${c_reset} directory"
-	echo -e "${c_green}--restore-clear${c_reset}		- all files in ${c_red}restore${c_reset} will be deleted"
-	echo -e "${c_green}--files${c_reset}			- will backup files/directories from each line in ${c_red}files.conf${c_reset} without encryption"
-	echo -e "${c_green}--clear-logs${c_reset}		- this will clear ${c_red}all${c_reset} vivian logs and monitoring checks"
-	echo
-	echo
-}
+source $vivian_root/help.sh
 
 function log (){
 
@@ -375,6 +350,10 @@ case "$arg" in
 		vivian_clear_logs
 	;;
 	*)
-		show_help
+		show_help $arg
 esac
 done
+
+if [[ -z "$1" ]]; then
+	show_help
+fi
