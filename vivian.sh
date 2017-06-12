@@ -123,32 +123,9 @@ function vivian_clear_logs(){
 	log "The log file was cleared."
 }
 
-function mysql_clean(){
-
-	# firstly check if we have some backups in localbkp directory
-
-	if find "$vivian_localbkp" -mindepth 1 -print -quit | grep -q .;
-
-	then
-
-	# if we have some backups, interupt the proccess
-	log "Error! We have backups for today. Exit!"
-	send_mail "$this_server: problem with vivian backups for $current_date" "The backup for $current_date already exist! Check server vivian, system logs and monitoring services."
-
-	$vivian_mon_status_error > $vivian_logs_mon
-
-	sleep 2
-
-	exit
-
-	else
-
-	# this will dump all mysql database and will not encrypt them
-
-	log "localbkp folder is empty and this is ok"
-
+function dump_mysql_databases() {
 	# list all databases. exclude some meta.
-	databases=`mysql --user=$vivian_mysql_username --password=$vivian_mysql_password -e "SHOW DATABASES;" | tr -d "| " | grep -v Database | grep -v ^information_schema$ | \
+	databases=`mysql --user=$vivian_mysql_username --password=$vivian_mysql_password -e "SHOW DATABASES" | tr -d "| " | grep -v Database | grep -v ^information_schema$ | \
 	grep -v ^mysql$ | grep -v ^performance_schema$ | grep -v ^phpmyadmin$`
 
 	# dump databases
@@ -156,66 +133,28 @@ function mysql_clean(){
 		if [[ "$db" != "information_schema" ]] && [[ "$db" != _* ]] ; then
 			log "Dumping database: $db"
 			mysqldump --force --opt --user=$vivian_mysql_username --password=$vivian_mysql_password --databases $db > $vivian_localbkp/$current_date-$db.sql
-
-			# gzip exported databases
-			gzip $vivian_localbkp*$db.sql
 		fi
-
 	done
+}
+
+function mysql_clean(){
+
+	dump_mysql_databases
+	gzip $vivian_localbkp*.sql
 
 	log "The databases are exported."
 	send_mail "$this_server: backups for $current_date are generated" "The backups (unsecured) for $current_date are generated."
 	$vivian_mon_status_ok > $vivian_logs_mon
 
-	fi
 }
 
 function mysql_encrypt(){
 
-	# firstly check if we have some backups in localbkp directory
-
-	if find "$vivian_localbkp" -mindepth 1 -print -quit | grep -q .;
-
-	then
-
-	# if we have some backups, interupt the proccess
-
-	log "Error! We have backups for today. Exit!"
-
-	send_mail "$this_server: problem with vivian backups for $current_date" "The backup for $current_date already exist! Check server vivian, system logs and monitoring services."
-
-	$vivian_mon_status_error > $vivian_logs_mon
-
-	sleep 2
-
-	exit
-
-	else
-
-	# this will dump all mysql database and will not encrypt them
-
-	log "localbkp folder is empty and this is ok"
-
-	# list all databases. exclude some meta.
-	databases=`mysql --user=$vivian_mysql_username --password=$vivian_mysql_password -e "SHOW DATABASES;" | tr -d "| " | grep -v Database | grep -v ^information_schema$ | \
-	grep -v ^mysql$ | grep -v ^performance_schema$ | grep -v ^phpmyadmin$`
-
-	# dump databases
-	for db in $databases; do
-		if [[ "$db" != "information_schema" ]] && [[ "$db" != _* ]] ; then
-			log "Dumping database: $db"
-			mysqldump --force --opt --user=$vivian_mysql_username --password=$vivian_mysql_password --databases $db > $vivian_localbkp/$current_date-$db.sql
-
-			# gzip exported databases
-			#gzip $vivian_localbkp*$db.sql
-		fi
-	done
+	dump_mysql_databases
 
 	log "The databases are exported but not encrypted."
 	send_mail "$this_server: backups for $current_date are generated" "The backups for $current_date are generated and secured."
 	$vivian_mon_status_ok > $vivian_logs_mon
-
-	fi
 
 	###
 	#
