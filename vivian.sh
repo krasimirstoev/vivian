@@ -165,20 +165,9 @@ function mysql_encrypt(){
 	#
 	###
 
-	cd $vivian_localbkp
-
-	pure_databases_list=$(find . -name "*.sql.gz" | cut -d"/" -f2)
-
-	for i in $pure_databases_list
-	do
-		encrypt_file $i
-	done
+	find $vivian_localbkp -name "*.sql.gz" -exec encrypt_file {} \; -delete
 
 	log "All unencrypted databases are now secured."
-
-	# when .sql files were encrypted, let's delete them
-
-	rm -f ${vivian_localbkp}/*.sql.gz
 
 }
 
