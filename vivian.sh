@@ -26,10 +26,10 @@ backup_username="backup"
 backup_key="${vivian_root}/master_key"
 
 # backup servers
-backup_master="backup@master.com"
-backup_secondary="backup@secondary.com"
-backup_master_port="backup@master.com"
-backup_secondary_port="backup@secondary.com"
+backup_master="backup.master.com"
+backup_secondary="backup.secondary.com"
+backup_master_port=1000
+backup_secondary_port=2000
 
 # email
 monitoring_email="monitoring@example.com"
@@ -306,37 +306,36 @@ function backup_files(){
 }
 
 function rsync_to_storage(){
-
-	rsync_key_create
-
-	cd $vivian_root
-
 	host=$1
 	port=$2
 
 	# let's move databases
-	rsync -avz --progress -e "ssh -p $port -i $backup_key" ${vivian_localbkp}/*.pi $host:$vivian_remote_storage
+	rsync_files $host:$vivian_remote_storage $port $backup_key "${vivian_localbkp}/*.pi"
 
 	# if we have any files, we will move them
 	if [ -d "$vivian_localbkp_files" ]; then
-		rsync -avz --progress -e "ssh -p $port -i $backup_key" ${vivian_localbkp_files} $host:$vivian_remote_storage_files
-	else
-		log "We don't have files for backup. Skip."
+		rsync_files $host:$vivian_remote_storage_files $port $backup_key "${vivian_localbkp_files}"
 	fi
+}
 
-	rsync_key_destroy
+function rsync_files() {
+	remote_path=$1
+	remote_ssh_port=$2
+	ssh_key=$3
+	local_files=$4
+	rsync_key_create $ssh_key
+	rsync -avz --progress -e "ssh -p $remote_ssh_port -i $ssh_key" $local_files $remote_path
+	rsync_key_destroy $ssh_key
 }
 
 function rsync_key_create(){
-	echo "$backup_private_key" > $backup_key
-	chmod 600 $backup_key
-	log "The master key is created"
-
+	key_file=$1
+	echo "$backup_private_key" > $key_file
+	chmod 600 $key_file
 }
 
 function rsync_key_destroy(){
-	rm -f $backup_key
-	log "The master key was deleted"
+	rm -f $1
 }
 
 
