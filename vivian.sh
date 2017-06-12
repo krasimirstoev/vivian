@@ -125,8 +125,7 @@ function vivian_clear_logs(){
 
 function dump_mysql_databases() {
 	# list all databases. exclude some meta.
-	databases=`mysql --user=$vivian_mysql_username --password=$vivian_mysql_password -e "SHOW DATABASES" | tr -d "| " | grep -v Database | grep -v ^information_schema$ | \
-	grep -v ^mysql$ | grep -v ^performance_schema$ | grep -v ^phpmyadmin$`
+	databases=`mysql --user=$vivian_mysql_username --password=$vivian_mysql_password -e "SHOW DATABASES" | grep -E -v "^(Database|information_schema|mysql|performance_schema|phpmyadmin)$"`
 
 	# dump databases
 	for db in $databases; do
