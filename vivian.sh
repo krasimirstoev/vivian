@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # int global
-vivian_root=$(readlink -f `dirname $0`)/
+vivian_root=$(readlink -f `dirname $0`)
 
 vivian_version="1.0"
-vivian_readme="${vivian_root}readme"
+vivian_readme="${vivian_root}/readme"
 
 # vivian mysql username/password
 vivian_mysql_username="xxxxxxxxxx"
@@ -23,7 +23,7 @@ vivian_remote_main="/backup/"
 
 # remote connection
 backup_username="backup"
-backup_key="${vivian_root}master_key"
+backup_key="${vivian_root}/master_key"
 
 # backup servers
 backup_master="backup@master.com"
@@ -50,25 +50,25 @@ this_server=`hostname`
 current_date=`date +%Y-%m-%d`
 
 # vivian file backup
-vivian_files_conf="${vivian_root}files.conf"
+vivian_files_conf="${vivian_root}/files.conf"
 
 # global paths
-vivian_localbkp="${vivian_root}localbkp/" # storage path
-vivian_localbkp_files="${vivian_localbkp}files/" # files/dirs
-vivian_restore="${vivian_root}restore/" # restore
+vivian_localbkp="${vivian_root}/localbkp" # storage path
+vivian_localbkp_files="${vivian_localbkp}/files" # files/dirs
+vivian_restore="${vivian_root}/restore" # restore
 
 # log files
-vivian_logs="${vivian_root}logs/"
-vivian_logs_general="${vivian_logs}general.log"
-vivian_logs_mon="${vivian_logs}last_backup"
-vivian_logs_localbkp="${vivian_logs}localbkp"
+vivian_logs="${vivian_root}/logs"
+vivian_logs_general="${vivian_logs}/general.log"
+vivian_logs_mon="${vivian_logs}/last_backup"
+vivian_logs_localbkp="${vivian_logs}/localbkp"
 
 # encryption
-vivian_encryption_file="${vivian_root}enc_password_hidden"
+vivian_encryption_file="${vivian_root}/enc_password_hidden"
 
 # remote server paths
-vivian_remote_storage="${vivian_remote_main}${this_server}/"
-vivian_remote_storage_files="${vivian_remote_storage}files/"
+vivian_remote_storage="${vivian_remote_main}${this_server}"
+vivian_remote_storage_files="${vivian_remote_storage}/files"
 
 # monitoring logs
 vivian_mon_status_ok="echo WE_HAVE_FRESH_BACKUP"
@@ -139,7 +139,7 @@ function dump_mysql_databases() {
 function mysql_clean(){
 
 	dump_mysql_databases
-	gzip $vivian_localbkp*.sql
+	gzip $vivian_localbkp/*.sql
 
 	log "The databases are exported."
 	send_mail "$this_server: backups for $current_date are generated" "The backups (unsecured) for $current_date are generated."
@@ -184,7 +184,7 @@ function mysql_encrypt(){
 
 	# when .sql files were encrypted, let's delete them
 
-	rm -f ${vivian_localbkp}*.sql
+	rm -f ${vivian_localbkp}/*.sql
 
 }
 
@@ -272,7 +272,7 @@ function restore_decrypt(){
 	done
 
 	# delete all encrypted files
-	rm -f ${vivian_restore}*.sql.pi
+	rm -f ${vivian_restore}/*.sql.pi
 
 }
 
@@ -340,7 +340,7 @@ function backup_files(){
 
 		for files in `cat $vivian_files_conf`
 		do
-			tar -zcvf ${vivian_localbkp_files}${current_date}-files.tar.gz $files >> /dev/null
+			tar -zcvf ${vivian_localbkp_files}/${current_date}-files.tar.gz $files >> /dev/null
 		done
 
 
@@ -362,7 +362,7 @@ function rsync_to_storage(){
 	port=$2
 
 	# let's move databases
-	rsync -avz --progress -e "ssh -p $port -i $backup_key" ${vivian_localbkp}*.pi $host:$vivian_remote_storage
+	rsync -avz --progress -e "ssh -p $port -i $backup_key" ${vivian_localbkp}/*.pi $host:$vivian_remote_storage
 
 	# if we have any files, we will move them
 	if [ -d "$vivian_localbkp_files" ]; then
