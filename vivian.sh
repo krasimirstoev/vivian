@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # int global
-vivian_root=`dirname $0`/
+vivian_root=$(readlink -f `dirname $0`)/
 
 vivian_version="1.0"
 vivian_readme="${vivian_root}readme"
