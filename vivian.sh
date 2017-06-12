@@ -130,14 +130,13 @@ function dump_mysql_databases() {
 	# dump databases
 	for db in $databases; do
 		log "Dumping database: $db"
-		mysqldump --force --opt --user=$vivian_mysql_username --password=$vivian_mysql_password --databases $db > $vivian_localbkp/$current_date-$db.sql
+		mysqldump --force --opt --user=$vivian_mysql_username --password=$vivian_mysql_password --databases $db | gzip > $vivian_localbkp/$current_date-$db.sql.gz
 	done
 }
 
 function mysql_clean(){
 
 	dump_mysql_databases
-	gzip $vivian_localbkp/*.sql
 
 	log "The databases are exported."
 	send_mail "$this_server: backups for $current_date are generated" "The backups (unsecured) for $current_date are generated."
@@ -171,7 +170,7 @@ function mysql_encrypt(){
 
 	cd $vivian_localbkp
 
-	pure_databases_list=$(find . -name "*.sql" | cut -d"/" -f2)
+	pure_databases_list=$(find . -name "*.sql.gz" | cut -d"/" -f2)
 
 	for i in $pure_databases_list
 	do
@@ -182,7 +181,7 @@ function mysql_encrypt(){
 
 	# when .sql files were encrypted, let's delete them
 
-	rm -f ${vivian_localbkp}/*.sql
+	rm -f ${vivian_localbkp}/*.sql.gz
 
 }
 
@@ -270,7 +269,7 @@ function restore_decrypt(){
 	done
 
 	# delete all encrypted files
-	rm -f ${vivian_restore}/*.sql.pi
+	rm -f ${vivian_restore}/*.pi
 
 }
 
