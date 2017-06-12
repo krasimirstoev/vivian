@@ -239,7 +239,7 @@ function mysql_encrypt(){
 
 	for i in $pure_databases_list
 	do
-		my_encrypt $i
+		encrypt_file $i
 	done
 
 	log "All unencrypted databases are now secured."
@@ -307,7 +307,7 @@ function localbkp_encrypt(){
 
 	cd $vivian_localbkp
 
-	my_encrypt $current_date-$this_server-localbkp.tar.gz
+	encrypt_file $current_date-$this_server-localbkp.tar.gz
 
 	log "Custom archive of localbkp was created and secured"
 
@@ -330,7 +330,7 @@ function restore_decrypt(){
 
 	for i in $encrypted_databases_list
 	do
-		my_decrypt $i
+		decrypt_file $i
 	done
 
 	# delete all encrypted files
@@ -356,19 +356,21 @@ function master_key_destroy(){
 	log "The master key was deleted"
 }
 
-function my_encrypt() {
+function encrypt_file() {
 	infile=$1
 	outfile=$infile.pi
-	encryption_file_create
-	openssl aes-256-cbc -in $infile -out $outfile -pass file:$vivian_encryption_file
-	encryption_file_destroy
+	openssl_file $infile $outfile
 }
 
-function my_decrypt() {
+function decrypt_file() {
 	infile=$1
 	outfile=${infile/.pi/}
+	openssl_file $infile $outfile -d
+}
+
+function openssl_file() {
 	encryption_file_create
-	openssl aes-256-cbc -d -in $infile -out $outfile -pass file:$vivian_encryption_file
+	openssl aes-256-cbc $3 -in $1 -out $2 -pass file:$vivian_encryption_file
 	encryption_file_destroy
 }
 
