@@ -26,6 +26,7 @@ backup_username="backup"
 backup_key="${vivian_root}/master_key"
 
 # backup servers
+declare -a remote_storages
 backup_master="backup.master.com"
 backup_secondary="backup.secondary.com"
 backup_master_port=1000
@@ -35,7 +36,6 @@ backup_secondary_port=2000
 monitoring_email="monitoring@example.com"
 
 source $vivian_root/.env
-
 
 # some globals
 this_server=`hostname`
@@ -280,6 +280,13 @@ function backup_files(){
 	fi
 }
 
+function rsync_to_storages() {
+	for storage_def in "${remote_storages[@]}"; do
+		parts=($storage_def)
+		rsync_to_storage "${parts[0]}@${parts[1]}" ${parts[2]}
+	done
+}
+
 function rsync_to_storage(){
 	host=$1
 	port=$2
@@ -321,6 +328,9 @@ case "$arg" in
 	;;
 	--mysql-encrypt|mysql-encrypt)
 		mysql_encrypt $vivian_localbkp
+	;;
+	--rsync|rsync)
+		rsync_to_storages
 	;;
 	--rsync-master|rsync-master)
 		rsync_to_storage "$backup_username@$backup_master" $backup_master_port
