@@ -239,24 +239,10 @@ function localbkp_encrypt(){
 
 }
 
+# this function will restore all encrypted databases in $vivian_restore folder
 function restore_decrypt(){
-
-	# this function will restore all encrypted databases
-	# in $vivian_restore folder
-
-	cd $vivian_restore
-
 	# get all files and do decryption
-	encrypted_databases_list=$(find . -name "*.pi" | cut -d"/" -f2)
-
-	for i in $encrypted_databases_list
-	do
-		decrypt_file $i
-	done
-
-	# delete all encrypted files
-	rm -f ${vivian_restore}/*.pi
-
+	find $vivian_restore -name "*.pi" -exec decrypt_file {} \; -delete
 }
 
 function master_key_create(){
