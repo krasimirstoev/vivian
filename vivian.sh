@@ -37,9 +37,6 @@ monitoring_email="monitoring@example.com"
 source $vivian_root/.env
 
 
-# random hash
-random_hash=`</dev/urandom tr -dc '1234567890qwertyuiopasdfghjklzxcvbnm' | head -c4; echo ""`
-
 # colors
 c_red="\033[1;31m"
 c_green="\033[1;32m"
@@ -47,7 +44,7 @@ c_reset="\033[0m"
 
 # some globals
 this_server=`hostname`
-current_date=`date +%Y-%m-%d`
+current_date=`date +%Y%m%d-%H%M`
 
 # vivian file backup
 vivian_files_conf="${vivian_root}/files.conf"
