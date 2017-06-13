@@ -10,6 +10,9 @@ vivian_readme="${vivian_root}/readme"
 vivian_mysql_username="xxxxxxxxxx"
 vivian_mysql_password="********************"
 
+# a space separated list of databases which should be skip by dumping
+skipped_databases=""
+
 encryption_password="********************"
 
 backup_private_key="-----BEGIN RSA PRIVATE KEY-----
@@ -95,8 +98,11 @@ function vivian_clear_logs(){
 
 function dump_mysql_databases() {
 	# list all databases. exclude some meta.
-	databases=`mysql --user=$vivian_mysql_username --password=$vivian_mysql_password -e "SHOW DATABASES" | grep -E -v "^(Database|information_schema|mysql|performance_schema|phpmyadmin)$"`
-
+	skipped="Database|information_schema|mysql|performance_schema|phpmyadmin"
+	if [[ -n $skipped_databases ]]; then
+		skipped=$skipped"|"${skipped_databases// /|}
+	fi
+	databases=`mysql --user=$vivian_mysql_username --password=$vivian_mysql_password -e "SHOW DATABASES" | grep -E -v "^(${skipped})$"`
 	storage_dir=$1
 	# dump databases
 	for db in $databases; do
