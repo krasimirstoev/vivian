@@ -26,11 +26,9 @@ backup_username="backup"
 backup_key="${vivian_root}/master_key"
 
 # backup servers
+# remote_storages is an array of strings of the form
+#    "username hostname port"
 declare -a remote_storages
-backup_master="backup.master.com"
-backup_secondary="backup.secondary.com"
-backup_master_port=1000
-backup_secondary_port=2000
 
 # email
 monitoring_email="monitoring@example.com"
@@ -335,12 +333,6 @@ case "$arg" in
 	;;
 	--rsync|rsync)
 		rsync_to_storages
-	;;
-	--rsync-master|rsync-master)
-		rsync_to_storage "$backup_username@$backup_master" $backup_master_port
-	;;
-	--rsync-secondary|rsync-secondary)
-		rsync_to_storage "$backup_username@$backup_secondary" $backup_secondary_port
 	;;
 	--localbkp-clear|localbkp-clear)
 		localbkp_clear
