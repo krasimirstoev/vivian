@@ -143,7 +143,9 @@ function mysql_encrypt(){
 	#
 	###
 
-	find $storage_dir -name "*.sql.gz" -exec encrypt_file {} \; -delete
+	for file in `find $storage_dir -name "*.sql.gz"`; do
+		encrypt_file "$file" && rm -f "$file"
+	done
 
 	log "All unencrypted databases are now secured."
 
@@ -220,7 +222,9 @@ function localbkp_encrypt(){
 # restore all encrypted files in a given directory
 function restore_decrypt(){
 	# get all files and do decryption
-	find $1 -name "*.pi" -exec decrypt_file {} \; -delete
+	for file in `find $1 -name "*.pi"`; do
+		decrypt_file "$file" && rm -f "$file"
+	done
 }
 
 function encrypt_file() {
