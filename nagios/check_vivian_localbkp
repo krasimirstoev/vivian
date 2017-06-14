@@ -8,7 +8,7 @@ nagios_unknown=3
 nagios_dependent=4
 
 # log file
-localbkp_log_file=`dirname $0`/../logs/localbkp
+localbkp_log_file=$(dirname $0)/../logs/localbkp
 
 # expected content
 log_content_ok="LOCALBKP_IS_EMPTY"

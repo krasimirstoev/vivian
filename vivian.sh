@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-vivian_root=$(readlink -f `dirname $0`)
+vivian_root=$(readlink -f $(dirname $0))
 
 source $vivian_root/.env
 
-this_server=`hostname`
-current_date=`date +%Y%m%d-%H%M`
+this_server=$(hostname)
+current_date=$(date +%Y%m%d-%H%M)
 
 # storage path
 vivian_localbkp="${vivian_root}/localbkp"

@@ -4,7 +4,7 @@ function dump_mysql_databases() {
 	if [[ -n $skipped_databases ]]; then
 		skipped=$skipped"|"${skipped_databases// /|}
 	fi
-	databases=`mysql --user=$vivian_mysql_username --password=$vivian_mysql_password -e "SHOW DATABASES" | grep -E -v "^(${skipped})$"`
+	databases=$(mysql --user=$vivian_mysql_username --password=$vivian_mysql_password -e "SHOW DATABASES" | grep -E -v "^(${skipped})$")
 	storage_dir=$1
 	# dump databases
 	for db in $databases; do
@@ -48,7 +48,7 @@ function mysql_encrypt() {
 	#
 	###
 
-	for file in `find $storage_dir -name "*.sql.gz"`; do
+	for file in $(find $storage_dir -name "*.sql.gz"); do
 		encrypt_file "$file" && rm -f "$file"
 	done
 

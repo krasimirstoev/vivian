@@ -14,7 +14,7 @@ function log() {
 
 	# small function for logging
 
-	echo "[`date +"%d.%m.%Y %T"`] $1" >> $vivian_logs_general
+	echo "[$(date +"%d.%m.%Y %T")] $1" >> $vivian_logs_general
 
 }
 
