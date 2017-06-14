@@ -7,7 +7,7 @@ c_reset="\033[0m"
 show_help() {
 
 	if [[ -n "$1" ]]; then
-		echo -e "Unknown option: '${c_red}$1${c_reset}'\n"
+		echo -e "Unknown option: '${c_red}$1${c_reset}'\n" >&2
 	fi
 
 	echo "Available options:"
@@ -24,4 +24,5 @@ show_help() {
 	echo -e "  ${c_green}--files${c_reset}               - backup files/directories from each line in ${c_red}files.conf${c_reset} without encryption"
 	echo -e "  ${c_green}--clear-logs${c_reset}          - clear ${c_red}all${c_reset} logs and monitoring checks"
 	echo
+	exit 1
 }
