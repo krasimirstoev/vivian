@@ -6,7 +6,7 @@ vivian_remote_storage_files="${vivian_remote_storage}/files"
 backup_key="${vivian_root}/master_key"
 
 rsync_to_storages() {
-	storages=("$@")
+	local storages=("$@")
 	for storage_def in "${storages[@]}"; do
 		parts=($storage_def)
 		rsync_to_storage "${parts[0]}@${parts[1]}" ${parts[2]}
@@ -14,8 +14,8 @@ rsync_to_storages() {
 }
 
 rsync_to_storage() {
-	host=$1
-	port=$2
+	local host=$1
+	local port=$2
 
 	# let's move databases
 	rsync_files $host:$vivian_remote_storage $port $backup_key "${vivian_localbkp}/*.pi"
@@ -27,17 +27,17 @@ rsync_to_storage() {
 }
 
 rsync_files() {
-	remote_path=$1
-	remote_ssh_port=$2
-	ssh_key=$3
-	local_files=$4
+	local remote_path=$1
+	local remote_ssh_port=$2
+	local ssh_key=$3
+	local local_files=$4
 	rsync_key_create $ssh_key
 	rsync -avz --progress -e "ssh -p $remote_ssh_port -i $ssh_key" $local_files $remote_path
 	rsync_key_destroy $ssh_key
 }
 
 rsync_key_create() {
-	key_file=$1
+	local key_file=$1
 	echo "$backup_private_key" > $key_file
 	chmod 600 $key_file
 }

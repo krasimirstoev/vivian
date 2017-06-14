@@ -1,11 +1,11 @@
 dump_mysql_databases() {
 	# list all databases. exclude some meta.
-	skipped="Database|information_schema|mysql|performance_schema|phpmyadmin"
+	local skipped="Database|information_schema|mysql|performance_schema|phpmyadmin"
 	if [[ -n $skipped_databases ]]; then
 		skipped=$skipped"|"${skipped_databases// /|}
 	fi
-	databases=$(mysql --user=$vivian_mysql_username --password=$vivian_mysql_password -e "SHOW DATABASES" | grep -E -v "^(${skipped})$")
-	storage_dir=$1
+	local databases=$(mysql --user=$vivian_mysql_username --password=$vivian_mysql_password -e "SHOW DATABASES" | grep -E -v "^(${skipped})$")
+	local storage_dir=$1
 	# dump databases
 	for db in $databases; do
 		log "Dumping database: $db"
@@ -15,7 +15,7 @@ dump_mysql_databases() {
 
 mysql_clean() {
 
-	storage_dir=$1
+	local storage_dir=$1
 	dump_mysql_databases $storage_dir
 
 	log "The databases are exported."
@@ -25,7 +25,7 @@ mysql_clean() {
 
 mysql_encrypt() {
 
-	storage_dir=$1
+	local storage_dir=$1
 	dump_mysql_databases $storage_dir
 
 	log "The databases are exported but not encrypted."

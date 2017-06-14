@@ -9,7 +9,7 @@ localbkp_encrypt() {
 
 	cd $vivian_root
 
-	archive_file=$current_date-$this_server-localbkp.tar.gz
+	local archive_file=$current_date-$this_server-localbkp.tar.gz
 	tar -zcvf $archive_file $vivian_localbkp
 
 	mv $archive_file $vivian_localbkp

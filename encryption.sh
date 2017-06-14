@@ -1,14 +1,14 @@
 vivian_encryption_file="${vivian_root}/enc_password_hidden"
 
 encrypt_file() {
-	infile=$1
-	outfile=$infile.pi
+	local infile=$1
+	local outfile=$infile.pi
 	openssl_file $infile $outfile
 }
 
 decrypt_file() {
-	infile=$1
-	outfile=${infile/.pi/}
+	local infile=$1
+	local outfile=${infile/.pi/}
 	openssl_file $infile $outfile -d
 }
 

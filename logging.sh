@@ -20,8 +20,8 @@ log() {
 
 send_mail() {
 	if [ -z "$monitoring_email" ]; then return; fi
-	subject=$1
-	content=$2
+	local subject=$1
+	local content=$2
 	echo $content | mail -a "Content-Type: text/plain; charset=UTF-8" -s $subject $monitoring_email
 }
 
