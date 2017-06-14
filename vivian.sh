@@ -25,7 +25,6 @@ backup_private_key="-----BEGIN RSA PRIVATE KEY-----
 vivian_remote_main="/backup/"
 
 # remote connection
-backup_username="backup"
 backup_key="${vivian_root}/master_key"
 
 # backup servers
@@ -56,9 +55,6 @@ vivian_logs_general="${vivian_logs}/general.log"
 vivian_logs_mon="${vivian_logs}/last_backup"
 vivian_logs_localbkp="${vivian_logs}/localbkp"
 
-# encryption
-vivian_encryption_file="${vivian_root}/enc_password_hidden"
-
 # remote server paths
 vivian_remote_storage="${vivian_remote_main}${this_server}"
 vivian_remote_storage_files="${vivian_remote_storage}/files"
@@ -70,6 +66,7 @@ vivian_mon_status_localbkp_error="echo LOCALBKP_IS_NOT_EMPTY"
 vivian_mon_status_localbkp_ok="echo LOCALBKP_IS_EMPTY"
 
 source $vivian_root/help.sh
+source $vivian_root/encryption.sh
 
 function log (){
 
@@ -229,36 +226,6 @@ function restore_decrypt(){
 	for file in `find $1 -name "*.pi"`; do
 		decrypt_file "$file" && rm -f "$file"
 	done
-}
-
-function encrypt_file() {
-	infile=$1
-	outfile=$infile.pi
-	openssl_file $infile $outfile
-}
-
-function decrypt_file() {
-	infile=$1
-	outfile=${infile/.pi/}
-	openssl_file $infile $outfile -d
-}
-
-function openssl_file() {
-	encryption_file_create
-	openssl aes-256-cbc $3 -in $1 -out $2 -pass file:$vivian_encryption_file
-	encryption_file_destroy
-}
-
-# this function will create the encryption file
-function encryption_file_create(){
-	echo $encryption_password > $vivian_encryption_file
-	log "The encryption file is created."
-}
-
-# this function will destroy the encryption file
-function encryption_file_destroy(){
-	rm -f $vivian_encryption_file
-	log "The encryption file was deleted."
 }
 
 function backup_files(){
