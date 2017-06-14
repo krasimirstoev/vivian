@@ -35,3 +35,11 @@ function encryption_file_destroy(){
 	rm -f $vivian_encryption_file
 	log "The encryption file was deleted."
 }
+
+# restore all encrypted files in a given directory
+function restore_decrypt(){
+	# get all files and do decryption
+	for file in `find $1 -name "*.pi"`; do
+		decrypt_file "$file" && rm -f "$file"
+	done
+}
