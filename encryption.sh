@@ -25,19 +25,19 @@ function openssl_file() {
 }
 
 # this function will create the encryption file
-function encryption_file_create(){
+function encryption_file_create() {
 	echo $encryption_password > $vivian_encryption_file
 	log "The encryption file is created."
 }
 
 # this function will destroy the encryption file
-function encryption_file_destroy(){
+function encryption_file_destroy() {
 	rm -f $vivian_encryption_file
 	log "The encryption file was deleted."
 }
 
 # restore all encrypted files in a given directory
-function restore_decrypt(){
+function restore_decrypt() {
 	# get all files and do decryption
 	for file in `find $1 -name "*.pi"`; do
 		decrypt_file "$file" && rm -f "$file"

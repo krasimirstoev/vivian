@@ -15,7 +15,7 @@ function dump_mysql_databases() {
 	done
 }
 
-function mysql_clean(){
+function mysql_clean() {
 
 	storage_dir=$1
 	dump_mysql_databases $storage_dir
@@ -25,7 +25,7 @@ function mysql_clean(){
 	$vivian_mon_status_ok > $vivian_logs_mon
 }
 
-function mysql_encrypt(){
+function mysql_encrypt() {
 
 	storage_dir=$1
 	dump_mysql_databases $storage_dir

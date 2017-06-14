@@ -18,7 +18,7 @@ function rsync_to_storages() {
 	done
 }
 
-function rsync_to_storage(){
+function rsync_to_storage() {
 	host=$1
 	port=$2
 
@@ -41,13 +41,13 @@ function rsync_files() {
 	rsync_key_destroy $ssh_key
 }
 
-function rsync_key_create(){
+function rsync_key_create() {
 	key_file=$1
 	echo "$backup_private_key" > $key_file
 	chmod 600 $key_file
 }
 
-function rsync_key_destroy(){
+function rsync_key_destroy() {
 	rm -f $1
 }
 

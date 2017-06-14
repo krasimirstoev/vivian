@@ -1,4 +1,4 @@
-function localbkp_clear(){
+function localbkp_clear() {
 
 	# this function will clear localbkp
 	rm -rf $vivian_localbkp/*
@@ -12,7 +12,7 @@ function localbkp_clear(){
 
 }
 
-function restore_clear(){
+function restore_clear() {
 
 	# this function will clear all files in restore
 	rm -rf $vivian_restore/*
