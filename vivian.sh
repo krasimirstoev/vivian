@@ -6,9 +6,6 @@ vivian_root=$(readlink -f `dirname $0`)
 vivian_version="1.0"
 vivian_readme="${vivian_root}/readme"
 
-# email
-monitoring_email="monitoring@example.com"
-
 source $vivian_root/.env
 
 # some globals
@@ -23,47 +20,11 @@ vivian_localbkp="${vivian_root}/localbkp" # storage path
 vivian_localbkp_files="${vivian_localbkp}/files" # files/dirs
 vivian_restore="${vivian_root}/restore" # restore
 
-# log files
-vivian_logs="${vivian_root}/logs"
-vivian_logs_general="${vivian_logs}/general.log"
-vivian_logs_mon="${vivian_logs}/last_backup"
-vivian_logs_localbkp="${vivian_logs}/localbkp"
-
-# monitoring logs
-vivian_mon_status_ok="echo WE_HAVE_FRESH_BACKUP"
-vivian_mon_status_error="echo TODAY_ARCHIVE_EXISTS"
-vivian_mon_status_localbkp_error="echo LOCALBKP_IS_NOT_EMPTY"
-vivian_mon_status_localbkp_ok="echo LOCALBKP_IS_EMPTY"
-
 source $vivian_root/help.sh
 source $vivian_root/mysql.sh
 source $vivian_root/encryption.sh
 source $vivian_root/rsync.sh
-
-function log (){
-
-	# small function for logging
-
-	echo "[`date +"%d.%m.%Y %T"`] $1" >> $vivian_logs_general
-
-}
-
-function send_mail() {
-	if [ -z "$monitoring_email" ]; then return; fi
-	subject=$1
-	content=$2
-	echo $content | mail -a "Content-Type: text/plain; charset=UTF-8" -s $subject $monitoring_email
-}
-
-function vivian_clear_logs(){
-
-	# this function will clear vivian logs
-	# and monitoring checks.
-
-	# clear general log file
-	cat /dev/null > $vivian_logs_general
-	log "The log file was cleared."
-}
+source $vivian_root/logging.sh
 
 function localbkp_clear(){
 
@@ -84,23 +45,6 @@ function restore_clear(){
 	# this function will clear all files in restore
 	rm -rf $vivian_restore/*
 	log "All files in restore were deleted."
-
-}
-
-function localbkp_check(){
-
-	# this function will cleck if localbkp is empty
-	if find "$vivian_localbkp" -mindepth 1 -print -quit | grep -q .;
-
-	then
-
-		$vivian_mon_status_localbkp_error > $vivian_logs_localbkp
-
-	else
-
-		$vivian_mon_status_localbkp_ok > $vivian_logs_localbkp
-
-	fi
 
 }
 
