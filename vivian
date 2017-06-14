@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# exit the script if somewhere is an uninitialised variable
+set -o nounset
+
 vivian_root=$(readlink -f $(dirname $0))
 
 source $vivian_root/.env
