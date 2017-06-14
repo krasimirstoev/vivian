@@ -5,7 +5,7 @@ vivian_files_conf="${vivian_root}/files.conf"
 vivian_localbkp_files="${vivian_localbkp}/files"
 
 # generate a tar.gz archive from all files in localbkp and encrypt it
-function localbkp_encrypt() {
+localbkp_encrypt() {
 
 	cd $vivian_root
 
@@ -29,7 +29,7 @@ function localbkp_encrypt() {
 }
 
 # if we have a line in files.conf, we will archive it in .tar.gz
-function backup_files() {
+backup_files() {
 
 	if [ -s "$vivian_files_conf" ];	then
 

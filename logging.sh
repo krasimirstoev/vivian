@@ -10,7 +10,7 @@ vivian_mon_status_error="echo TODAY_ARCHIVE_EXISTS"
 vivian_mon_status_localbkp_error="echo LOCALBKP_IS_NOT_EMPTY"
 vivian_mon_status_localbkp_ok="echo LOCALBKP_IS_EMPTY"
 
-function log() {
+log() {
 
 	# small function for logging
 
@@ -18,14 +18,14 @@ function log() {
 
 }
 
-function send_mail() {
+send_mail() {
 	if [ -z "$monitoring_email" ]; then return; fi
 	subject=$1
 	content=$2
 	echo $content | mail -a "Content-Type: text/plain; charset=UTF-8" -s $subject $monitoring_email
 }
 
-function vivian_clear_logs() {
+vivian_clear_logs() {
 
 	# this function will clear vivian logs
 	# and monitoring checks.
@@ -35,7 +35,7 @@ function vivian_clear_logs() {
 	log "The log file was cleared."
 }
 
-function localbkp_check() {
+localbkp_check() {
 
 	# this function will cleck if localbkp is empty
 	if find "$vivian_localbkp" -mindepth 1 -print -quit | grep -q .;

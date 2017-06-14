@@ -4,7 +4,7 @@ c_green="\033[1;32m"
 c_reset="\033[0m"
 
 # Help section
-function show_help() {
+show_help() {
 
 	if [[ -n "$1" ]]; then
 		echo -e "Unknown option: '${c_red}$1${c_reset}'\n"

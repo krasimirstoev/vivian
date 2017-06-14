@@ -5,7 +5,7 @@ vivian_remote_storage_files="${vivian_remote_storage}/files"
 # remote connection
 backup_key="${vivian_root}/master_key"
 
-function rsync_to_storages() {
+rsync_to_storages() {
 	storages=("$@")
 	for storage_def in "${storages[@]}"; do
 		parts=($storage_def)
@@ -13,7 +13,7 @@ function rsync_to_storages() {
 	done
 }
 
-function rsync_to_storage() {
+rsync_to_storage() {
 	host=$1
 	port=$2
 
@@ -26,7 +26,7 @@ function rsync_to_storage() {
 	fi
 }
 
-function rsync_files() {
+rsync_files() {
 	remote_path=$1
 	remote_ssh_port=$2
 	ssh_key=$3
@@ -36,12 +36,12 @@ function rsync_files() {
 	rsync_key_destroy $ssh_key
 }
 
-function rsync_key_create() {
+rsync_key_create() {
 	key_file=$1
 	echo "$backup_private_key" > $key_file
 	chmod 600 $key_file
 }
 
-function rsync_key_destroy() {
+rsync_key_destroy() {
 	rm -f $1
 }

@@ -1,4 +1,4 @@
-function dump_mysql_databases() {
+dump_mysql_databases() {
 	# list all databases. exclude some meta.
 	skipped="Database|information_schema|mysql|performance_schema|phpmyadmin"
 	if [[ -n $skipped_databases ]]; then
@@ -13,7 +13,7 @@ function dump_mysql_databases() {
 	done
 }
 
-function mysql_clean() {
+mysql_clean() {
 
 	storage_dir=$1
 	dump_mysql_databases $storage_dir
@@ -23,7 +23,7 @@ function mysql_clean() {
 	$vivian_mon_status_ok > $vivian_logs_mon
 }
 
-function mysql_encrypt() {
+mysql_encrypt() {
 
 	storage_dir=$1
 	dump_mysql_databases $storage_dir
