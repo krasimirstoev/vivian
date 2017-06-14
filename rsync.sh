@@ -6,7 +6,8 @@ vivian_remote_storage_files="${vivian_remote_storage}/files"
 backup_key="${vivian_root}/master_key"
 
 function rsync_to_storages() {
-	for storage_def in "${remote_storages[@]}"; do
+	storages=("$@")
+	for storage_def in "${storages[@]}"; do
 		parts=($storage_def)
 		rsync_to_storage "${parts[0]}@${parts[1]}" ${parts[2]}
 	done

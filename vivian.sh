@@ -29,7 +29,7 @@ case "$arg" in
 		mysql_encrypt $vivian_localbkp
 	;;
 	--rsync|rsync)
-		rsync_to_storages
+		rsync_to_storages "${remote_storages[@]}"
 	;;
 	--localbkp-clear|localbkp-clear)
 		localbkp_clear
