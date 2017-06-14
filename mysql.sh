@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 function dump_mysql_databases() {
 	# list all databases. exclude some meta.
 	skipped="Database|information_schema|mysql|performance_schema|phpmyadmin"

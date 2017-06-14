@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # colors
 c_red="\033[1;31m"
 c_green="\033[1;32m"

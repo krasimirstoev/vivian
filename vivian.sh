@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 vivian_root=$(readlink -f `dirname $0`)
 

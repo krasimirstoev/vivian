@@ -1,10 +1,4 @@
-#!/usr/bin/env bash
-
 vivian_encryption_file="${vivian_root}/enc_password_hidden"
-
-if [[ -z $encryption_password ]]; then
-	source $vivian_root/.env
-fi
 
 function encrypt_file() {
 	infile=$1

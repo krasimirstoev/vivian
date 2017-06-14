@@ -1,9 +1,3 @@
-#!/usr/bin/env bash
-
-if [[ -z $remote_storages ]]; then
-	source $vivian_root/.env
-fi
-
 # remote server paths
 vivian_remote_storage="${vivian_remote_main}/${this_server}"
 vivian_remote_storage_files="${vivian_remote_storage}/files"
@@ -50,4 +44,3 @@ function rsync_key_create() {
 function rsync_key_destroy() {
 	rm -f $1
 }
-

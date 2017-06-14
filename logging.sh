@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # log files
 vivian_logs="${vivian_root}/logs"
 vivian_logs_general="${vivian_logs}/general.log"
