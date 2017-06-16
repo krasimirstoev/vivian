@@ -10,7 +10,6 @@ cd $vivian_root
 
 source .env
 
-this_server=$(hostname)
 current_date=$(date +%Y%m%d-%H%M)
 
 # storage path
