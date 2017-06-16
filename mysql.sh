@@ -4,12 +4,13 @@ dump_mysql_databases() {
 	if [[ -n $skipped_databases ]]; then
 		skipped=$skipped"|"${skipped_databases// /|}
 	fi
-	local databases=$(mysql --user=$vivian_mysql_username --password=$vivian_mysql_password -e "SHOW DATABASES" | grep -E -v "^(${skipped})$")
+	local connection="--user=${mysql_config[username]-} --password=${mysql_config[password]-} --host=${mysql_config[host]-} --port=${mysql_config[port]-}"
+	local databases=$(mysql $connection -e "SHOW DATABASES" | grep -E -v "^(${skipped})$")
 	local storage_dir=$1
 	# dump databases
 	for db in $databases; do
 		log "Dumping database: $db"
-		mysqldump --force --opt --user=$vivian_mysql_username --password=$vivian_mysql_password --databases $db | gzip > $storage_dir/$current_date-$db.sql.gz
+		mysqldump --force --opt $connection --databases $db | gzip > $storage_dir/$current_date-$db.sql.gz
 	done
 }
 
