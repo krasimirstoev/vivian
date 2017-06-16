@@ -6,8 +6,9 @@ set -o nounset
 set -o errexit
 
 vivian_root=$(readlink -f $(dirname $0))
+cd $vivian_root
 
-source $vivian_root/.env
+source .env
 
 this_server=$(hostname)
 current_date=$(date +%Y%m%d-%H%M)
@@ -17,13 +18,13 @@ vivian_localbkp="${vivian_root}/localbkp"
 # restore path
 vivian_restore="${vivian_root}/restore"
 
-source $vivian_root/help.sh
-source $vivian_root/mysql.sh
-source $vivian_root/encryption.sh
-source $vivian_root/rsync.sh
-source $vivian_root/cleaner.sh
-source $vivian_root/logging.sh
-source $vivian_root/misc.sh
+source help.sh
+source mysql.sh
+source encryption.sh
+source rsync.sh
+source cleaner.sh
+source logging.sh
+source misc.sh
 
 for arg in "$@"; do
 case "$arg" in
