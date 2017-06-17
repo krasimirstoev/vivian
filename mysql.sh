@@ -7,11 +7,14 @@ dump_mysql_databases() {
 	local connection="--user=${mysql_config[username]-} --password=${mysql_config[password]-} --host=${mysql_config[host]-} --port=${mysql_config[port]-}"
 	local databases=$(mysql $connection -e "SHOW DATABASES" | grep -E -v "^(${skipped})$")
 	local storage_dir=$1
+	cd $storage_dir
 	# dump databases
 	for db in $databases; do
 		log "Dumping database: $db"
-		mysqldump --force --opt $connection --databases $db | gzip > $storage_dir/$current_date-$db.sql.gz
+		mysqldump --force --opt $connection --databases $db | gzip > $current_date-$db.sql.gz
+		ln -sf $current_date-$db.sql.gz latest-$db.sql.gz
 	done
+	cd - >/dev/null
 }
 
 mysql_clean() {
