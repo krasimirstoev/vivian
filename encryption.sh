@@ -3,22 +3,13 @@ vivian_encryption_file="${vivian_root}/enc_password_hidden"
 encrypt_file() {
 	local infile=$1
 	local outfile=$infile.pi
-	if [[ -h $infile ]]; then
-		ln -s $(readlink "$infile").pi $outfile
-	else
-		openssl_file $infile $outfile
-	fi
+	openssl_file $infile $outfile
 }
 
 decrypt_file() {
 	local infile=$1
 	local outfile=${infile/.pi/}
-	if [[ -h $infile ]]; then
-		local target=$(readlink $infile)
-		ln -s ${target/.pi/} $outfile
-	else
-		openssl_file $infile $outfile -d
-	fi
+	openssl_file $infile $outfile -d
 }
 
 openssl_file() {
