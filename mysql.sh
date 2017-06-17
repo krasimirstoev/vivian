@@ -7,14 +7,26 @@ dump_mysql_databases() {
 	local connection="--user=${mysql_config[username]-} --password=${mysql_config[password]-} --host=${mysql_config[host]-} --port=${mysql_config[port]-}"
 	local databases=$(mysql $connection -e "SHOW DATABASES" | grep -E -v "^(${skipped})$")
 	local storage_dir=$1
+	local oldcwd=$(pwd)
 	cd $storage_dir
 	# dump databases
 	for db in $databases; do
+		cd $storage_dir
 		log "Dumping database: $db"
-		mysqldump --force --opt $connection --databases $db | gzip > $current_date-$db.sql.gz
-		ln -sf $current_date-$db.sql.gz latest-$db.sql.gz
+		if [ ! -d $db ]; then
+			mkdir $db
+		fi
+		cd $db
+		git init 1>/dev/null 2>&1
+		mysqldump --skip-dump-date $connection --databases $db | sed 's#),(#),\n(#g' > all.sql
+		if [[ $(git status --porcelain) ]]; then
+			git add *.sql
+			git commit -m "dump from $(date)"
+			cd ..
+			tar zcvf $db.tgz $db
+		fi
 	done
-	cd - >/dev/null
+	cd $oldcwd
 }
 
 mysql_clean() {
@@ -36,23 +48,7 @@ mysql_encrypt() {
 	send_mail "$this_server: backups for $current_date are generated" "The backups for $current_date are generated and secured."
 	$vivian_mon_status_ok > $vivian_logs_mon
 
-	###
-	#
-	# Encryption part:
-	#
-	# When all databases are exported and we have encryption file
-	# the next step will be to compress every .sql file.
-	#
-	# The fun part is that all encrypted files will be called:
-	#
-	#	$currentdate-databasename.pi
-	#
-	# When we need to restore some database, we need only .pi file.
-	# The restoration is automated and we don't need anything else.
-	#
-	###
-
-	for file in $(find $storage_dir -name "*.sql.gz"); do
+	for file in $(find $storage_dir -name "*.tgz"); do
 		encrypt_file "$file" && rm -f "$file"
 	done
 
