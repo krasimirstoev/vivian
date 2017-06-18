@@ -21,7 +21,6 @@ source help.sh
 source mysql.sh
 source encryption.sh
 source rsync.sh
-source cleaner.sh
 source logging.sh
 source misc.sh
 
@@ -36,20 +35,11 @@ case "$arg" in
 	--rsync|rsync)
 		rsync_to_storages "${remote_storages[@]}"
 	;;
-	--localbkp-clear|localbkp-clear)
-		localbkp_clear
-	;;
-	--localbkp-check|localbkp-check)
-		localbkp_check
-	;;
 	--localbkp-encrypt|localbkp-encrypt)
 		localbkp_encrypt
 	;;
 	--restore-decrypt|restore-decrypt)
 		restore_decrypt $vivian_restore
-	;;
-	--restore-clear|restore-clear)
-		restore_clear
 	;;
 	--files|files)
 		backup_files

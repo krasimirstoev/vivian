@@ -34,20 +34,3 @@ vivian_clear_logs() {
 	cat /dev/null > $vivian_logs_general
 	log "The log file was cleared."
 }
-
-localbkp_check() {
-
-	# this function will cleck if localbkp is empty
-	if find "$vivian_localbkp" -mindepth 1 -print -quit | grep -q .;
-
-	then
-
-		$vivian_mon_status_localbkp_error > $vivian_logs_localbkp
-
-	else
-
-		$vivian_mon_status_localbkp_ok > $vivian_logs_localbkp
-
-	fi
-
-}
