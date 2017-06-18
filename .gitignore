@@ -1,7 +1,7 @@
 /.env
 /files.conf
-/logs/*
-/restore/*
-/localbkp/*
+/var/logs/*
+/var/restore/*
+/var/repos/*
 *.sh.x
 !.gitkeep

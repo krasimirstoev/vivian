@@ -1,5 +1,12 @@
 vivian_encryption_file="${vivian_root}/enc_password_hidden"
 
+encrypt_archives_in_dir() {
+	local dir=$1
+	for file in $(find $dir -name "*.tgz"); do
+		encrypt_file "$file" && rm -f "$file"
+	done
+}
+
 encrypt_file() {
 	local infile=$1
 	local outfile=$infile.pi

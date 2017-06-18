@@ -1,5 +1,5 @@
 # log files
-vivian_logs="${vivian_root}/logs"
+vivian_logs="${vivian_root}/var/logs"
 vivian_logs_general="${vivian_logs}/general.log"
 vivian_logs_mon="${vivian_logs}/last_backup"
 vivian_logs_localbkp="${vivian_logs}/localbkp"

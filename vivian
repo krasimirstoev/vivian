@@ -12,34 +12,33 @@ source .env
 
 current_date=$(date +%Y%m%d-%H%M)
 
-# storage path
-vivian_localbkp="${vivian_root}/localbkp"
-# restore path
-vivian_restore="${vivian_root}/restore"
-
 source help.sh
+source git.sh
 source mysql.sh
 source encryption.sh
 source rsync.sh
 source logging.sh
 source misc.sh
 
+repos_dir=$vivian_root/var/repos
+
 for arg in "$@"; do
 case "$arg" in
 	--mysql-clean|mysql-clean)
-		mysql_clean $vivian_localbkp
+		mysql_clean $repos_dir
 	;;
 	--mysql-encrypt|mysql-encrypt)
-		mysql_encrypt $vivian_localbkp
+		mysql_encrypt $repos_dir
 	;;
 	--rsync|rsync)
-		rsync_to_storages "${remote_storages[@]}"
+		rsync_to_storages $repos_dir "${remote_storages[@]}"
 	;;
 	--restore-decrypt|restore-decrypt)
-		restore_decrypt $vivian_restore
+		restore_decrypt var/restore
 	;;
 	--files|files)
-		backup_files
+		backup_files files.conf $repos_dir/files
+		encrypt_archives_in_dir $repos_dir
 	;;
 	--clear-logs|clear-logs)
 		vivian_clear_logs

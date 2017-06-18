@@ -1,15 +1,17 @@
 rsync_to_storages() {
+	local local_dir=$1; shift
 	local storages=("$@")
 	for storage_def in "${storages[@]}"; do
 		parts=($storage_def)
-		rsync_to_storage "${parts[0]}@${parts[1]}" ${parts[2]} "${parts[3]}"
+		rsync_to_storage "$local_dir" "${parts[0]}@${parts[1]}" ${parts[2]} "${parts[3]}"
 	done
 }
 
 rsync_to_storage() {
-	local host=$1
-	local port=$2
-	local path=$3
+	local local_dir=$1
+	local host=$2
+	local port=$3
+	local path=$4
 
 	# remote server paths
 	local full_path="$path/$this_server"
@@ -17,12 +19,7 @@ rsync_to_storage() {
 	local backup_key="${vivian_root}/master_key"
 
 	# let's move databases
-	rsync_files "$host" $port "$backup_key" "$full_path" "${vivian_localbkp}/*.pi"
-
-	# if we have any files, we will move them
-	if [ -d "$vivian_localbkp_files" ]; then
-		rsync_files "$host" $port "$backup_key" "$full_path_files" "${vivian_localbkp_files}"
-	fi
+	rsync_files "$host" $port "$backup_key" "$full_path" "$local_dir/*.pi"
 }
 
 rsync_files() {

@@ -1,12 +1,16 @@
-# if we have a line in files.conf, we will archive it in .tar.gz
+# copy all files which are listed in a given configuration file
+# to a git repository
 backup_files() {
+	local files_conf=$1
+	local git_repo=$2
 
-	if [ -s "$vivian_files_conf" ];	then
+	if [[ -s "$files_conf" ]]; then
 
-		mkdir -p $vivian_localbkp_files
-		for files in $(cat $vivian_files_conf); do
-			tar -zcvf ${vivian_localbkp_files}/${current_date}-files.tar.gz $files >> /dev/null
+		git_cd "$git_repo"
+		for files in $(cat "$files_conf"); do
+			cp -R "$files" .
 		done
+		git_commit_and_archive
 
 	else
 		log "There are no files for backup. Skip."
