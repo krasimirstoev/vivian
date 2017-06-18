@@ -10,7 +10,7 @@ git_cd() {
 # commit changes in the current directory and create an archive in the parent directory
 git_commit_and_archive() {
 	if [[ $(git status --porcelain) ]]; then
-		git add *.sql
+		git add .
 		git commit -m "dump from $(date)"
 		# cleanup - TODO check if this helps with the disk usage
 		git gc
