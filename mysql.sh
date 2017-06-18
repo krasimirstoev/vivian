@@ -23,7 +23,7 @@ dump_mysql_databases() {
 dump_mysql_database() {
 	local db=$1
 	local connection=$2
-	mysqldump --skip-dump-date --no-data $connection --databases $db > 000-structure.sql
+	mysqldump --skip-dump-date --no-data $connection --databases $db | sed 's/ AUTO_INCREMENT=[0-9]*\b//g' > 000-structure.sql
 	local dbtables=$(mysql $connection $db -e "show tables" | grep -v Tables_in_)
 	local dbtable
 	for dbtable in $dbtables; do
