@@ -14,10 +14,21 @@ dump_mysql_databases() {
 		cd $storage_dir
 		log "Dumping database: $db"
 		git_cd $db
-		mysqldump --skip-dump-date $connection --databases $db | sed 's#),(#),\n(#g' > all.sql
+		dump_mysql_database $db "$connection"
 		git_commit_and_archive
 	done
 	cd $oldcwd
+}
+
+dump_mysql_database() {
+	local db=$1
+	local connection=$2
+	mysqldump --skip-dump-date --no-data $connection --databases $db > 000-structure.sql
+	local dbtables=$(mysql $connection $db -e "show tables" | grep -v Tables_in_)
+	local dbtable
+	for dbtable in $dbtables; do
+		mysqldump --skip-dump-date $connection $db $dbtable | sed 's#),(#),\n(#g' > $dbtable.sql
+	done
 }
 
 mysql_clean() {
