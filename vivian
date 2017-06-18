@@ -35,9 +35,6 @@ case "$arg" in
 	--rsync|rsync)
 		rsync_to_storages "${remote_storages[@]}"
 	;;
-	--localbkp-encrypt|localbkp-encrypt)
-		localbkp_encrypt
-	;;
 	--restore-decrypt|restore-decrypt)
 		restore_decrypt $vivian_restore
 	;;
