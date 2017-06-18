@@ -10,8 +10,12 @@ git_cd() {
 # commit changes in the current directory and create an archive in the parent directory
 git_commit_and_archive() {
 	if [[ $(git status --porcelain) ]]; then
+		# first cleanup the repository
+		git gc
+
 		git add *.sql
 		git commit -m "dump from $(date)"
+
 		local dir=$(basename $(pwd))
 		cd ..
 		tar zcf "$dir.tgz" "$dir"
