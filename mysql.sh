@@ -27,7 +27,8 @@ dump_mysql_database() {
 	mysqldump --skip-dump-date --no-data $connection --databases $db | sed "$no_auto_increment" > 000-structure.sql
 	local dbtables=$(mysql $connection $db -e "show tables" | grep -v Tables_in_)
 	local dbtable
-	local max_file_size=5000000
+	local max_file_size=1000000
+	rm -f *.sql*
 	for dbtable in $dbtables; do
 		mysqldump --skip-dump-date $connection $db $dbtable | sed 's#),(#),\n(#g' | sed "$no_auto_increment" > $dbtable.sql
 		if [[ $(stat -c%s $dbtable.sql) -ge $max_file_size ]]; then
