@@ -10,7 +10,7 @@ backup_extra_files() {
 
 	make_sure_dir_exits "$target_dir"
 	local current_date=$(date +%Y%m%d-%H%M)
-	tar Pzcf "$target_dir/$current_date.tgz" --files-from "$files_conf"
+	tar Pzcf "$target_dir/$(basename $target_dir)-$current_date.tgz" --files-from "$files_conf"
 	return 0
 }
 

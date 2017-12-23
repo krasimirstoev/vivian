@@ -12,6 +12,6 @@ dump_mysql_databases() {
 		log "Dumping database: $db"
 		local db_dir="$storage_dir/$db"
 		make_sure_dir_exits "$db_dir"
-		mysqldump $connection $db | gzip > "$db_dir/$current_date.sql.gz"
+		mysqldump $connection $db | gzip > "$db_dir/$db-$current_date.sql.gz"
 	done
 }
