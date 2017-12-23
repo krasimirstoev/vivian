@@ -15,3 +15,11 @@ dump_mysql_databases() {
 		mysqldump $connection $db | gzip > "$db_dir/$db-$current_date.sql.gz"
 	done
 }
+
+dump_pg_databases() {
+	local storage_dir=$1
+	# execute the dump command as user "postgres"
+	# following should be in the config for sudo:
+	#     vivian ALL=(postgres) NOPASSWD: /usr/bin/pg_dumpall
+	sudo -u postgres pg_dumpall | gzip > "$storage_dir/pg/pg_all.psql.gz"
+}

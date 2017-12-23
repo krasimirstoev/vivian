@@ -23,7 +23,7 @@ rsync_to_storage() {
 	rsync_key_create $ssh_key
 	# first make sure that the target directory exists
 	ssh -p $port -i $ssh_key "$host" mkdir -p "$remote_path"
-	rsync -avz --delete --progress -e "ssh -p $port -i $ssh_key" $data_dir/ "$host:$remote_path"
+	rsync -avz --delete --progress -e "ssh -p $port -i $ssh_key" "$data_dir/" "$host:$remote_path"
 	rsync_key_destroy $ssh_key
 }
 
