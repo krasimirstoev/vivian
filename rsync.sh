@@ -18,8 +18,7 @@ rsync_to_storage() {
 	local full_path_files="${full_path}/files"
 	local backup_key="${program_root}/master_key"
 
-	# let's move databases
-	rsync_files "$host" $port "$backup_key" "$full_path" "$local_dir/*.pi"
+	rsync_files "$host" $port "$backup_key" "$full_path" "$local_dir/**/*.pi"
 }
 
 rsync_files() {
