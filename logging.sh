@@ -1,5 +1,5 @@
 # log files
-vivian_logs="${vivian_root}/var/logs"
+vivian_logs="${program_root}/var/logs"
 vivian_logs_general="${vivian_logs}/general.log"
 vivian_logs_mon="${vivian_logs}/last_backup"
 vivian_logs_localbkp="${vivian_logs}/localbkp"
@@ -11,11 +11,8 @@ vivian_mon_status_localbkp_error="echo LOCALBKP_IS_NOT_EMPTY"
 vivian_mon_status_localbkp_ok="echo LOCALBKP_IS_EMPTY"
 
 log() {
-
 	# small function for logging
-
 	echo "[$(date +"%d.%m.%Y %T")] $1" >> $vivian_logs_general
-
 }
 
 send_mail() {
@@ -25,11 +22,8 @@ send_mail() {
 	echo "$content" | mail -a "Content-Type: text/plain; charset=UTF-8" -s "$subject" "$monitoring_email"
 }
 
+# this function will clear vivian logs and monitoring checks.
 vivian_clear_logs() {
-
-	# this function will clear vivian logs
-	# and monitoring checks.
-
 	# clear general log file
 	cat /dev/null > $vivian_logs_general
 	log "The log file was cleared."

@@ -1,52 +1,71 @@
 #!/usr/bin/env bash
 
-# exit the script if somewhere is an uninitialised variable
-set -o nounset
-#  exit the script if any statement returns a non-true value
-set -o errexit
+program_root=$(readlink -f $(dirname $0))
+cd $program_root
 
-vivian_root=$(readlink -f $(dirname $0))
-cd $vivian_root
-
+source core.sh
 source .env
-
-current_date=$(date +%Y%m%d-%H%M)
-
-source help.sh
-source git.sh
 source mysql.sh
+source file.sh
 source encryption.sh
 source rsync.sh
 source logging.sh
-source misc.sh
 
-repos_dir=$vivian_root/var/repos
+data_dir=$program_root/var/data
+current_date=$(date +%Y%m%d-%H%M)
+
+flag_encrypt="--encrypt"
+flag_rsync="--rsync"
+
+show_help() {
+	# colors
+	local c_red=$(printf '\033[1;31m')
+	local c_green=$(printf '\033[1;32m')
+	local c_reset=$(printf '\033[0m')
+
+	if [[ -n "$1" ]]; then
+		echo -e "\nUnknown option: '${c_red}$1${c_reset}'\n" >&2
+	fi
+
+	cat <<-USAGE
+	Available options:
+
+	  ${c_green}--mysql${c_reset}         - dump all MySQL databases
+	  ${c_green}--files${c_reset}         - backup files/directories from each line in ${c_red}files.conf${c_reset}
+	  ${c_green}--clear-logs${c_reset}    - clear ${c_red}all${c_reset} logs and monitoring checks
+	  ${c_green}--encrypt${c_reset}       - encrypt all created archives
+	  ${c_green}--rsync${c_reset}         - rsync databases with the ${c_red}remote storages${c_reset}
+
+USAGE
+	exit 1
+}
 
 for arg in "$@"; do
 case "$arg" in
-	--mysql-clean|mysql-clean)
-		mysql_clean $repos_dir
-	;;
-	--mysql-encrypt|mysql-encrypt)
-		mysql_encrypt $repos_dir
-	;;
-	--rsync|rsync)
-		rsync_to_storages $repos_dir "${remote_storages[@]}"
-	;;
-	--restore-decrypt|restore-decrypt)
-		restore_decrypt var/restore
+	--mysql|mysql)
+		dump_mysql_databases "$data_dir"
+		in_array $flag_encrypt "$@" && encrypt_files "$data_dir"/*/*gz
+		rotate_backups "$data_dir"
 	;;
 	--files|files)
-		backup_files files.conf $repos_dir/files
-		encrypt_archives_in_dir $repos_dir
+		files_data_dir=$data_dir/files
+		if backup_extra_files "$program_root/files.conf" "$files_data_dir"; then
+			in_array $flag_encrypt "$@" && encrypt_files "$files_data_dir"/*.tgz
+			rotate_backup "$files_data_dir"
+		fi
 	;;
 	--clear-logs|clear-logs)
 		vivian_clear_logs
+	;;
+	--encrypt|--rsync)
+		# boolean flags which are handled separately
 	;;
 	*)
 		show_help $arg
 esac
 done
+
+in_array $flag_rsync "$@" && rsync_to_storages "$data_dir" "${remote_storages[@]}"
 
 if [[ -z "$1" ]]; then
 	show_help

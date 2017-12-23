@@ -1,7 +1,5 @@
 /.env
 /files.conf
-/var/logs/*
-/var/restore/*
-/var/repos/*
+/var/*/
 *.sh.x
 !.gitkeep

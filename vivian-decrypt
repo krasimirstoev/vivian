@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+program_root=$(readlink -f $(dirname $0))
+cd $program_root
+
+source core.sh
+source .env
+source encryption.sh
+
+for file in "$@"; do
+	decrypt_files "$file"
+done

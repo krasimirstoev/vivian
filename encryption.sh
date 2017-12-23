@@ -1,9 +1,13 @@
-vivian_encryption_file="${vivian_root}/enc_password_hidden"
+vivian_encryption_file="${program_root}/enc_password_hidden"
 
-encrypt_archives_in_dir() {
-	local dir=$1
-	for file in $(find $dir -name "*.tgz"); do
-		encrypt_file "$file" && rm -f "$file"
+is_function_loaded log || source logging.sh
+
+encrypt_files() {
+	local file
+	for file in "$@"; do
+		if [[ -e "$file" ]]; then
+			encrypt_file "$file" && rm -f "$file"
+		fi
 	done
 }
 
@@ -11,6 +15,17 @@ encrypt_file() {
 	local infile=$1
 	local outfile=$infile.pi
 	openssl_file $infile $outfile
+}
+
+decrypt_files() {
+	local file
+	for file in "$@"; do
+		if [[ -d "$file" ]]; then
+			decrypt_files "$file"/*.pi
+		elif [[ -e "$file" ]]; then
+			decrypt_file "$file" && rm -f "$file"
+		fi
+	done
 }
 
 decrypt_file() {
@@ -22,7 +37,7 @@ decrypt_file() {
 openssl_file() {
 	encryption_file_create
 	local extra_options=${3-}
-	openssl aes-256-cbc $extra_options -in $1 -out $2 -pass file:$vivian_encryption_file
+	openssl aes-256-cbc $extra_options -in "$1" -out "$2" -pass file:$vivian_encryption_file
 	encryption_file_destroy
 }
 
@@ -36,12 +51,4 @@ encryption_file_create() {
 encryption_file_destroy() {
 	rm -f $vivian_encryption_file
 	log "The encryption file was deleted."
-}
-
-# restore all encrypted files in a given directory
-restore_decrypt() {
-	# get all files and do decryption
-	for file in $(find $1 -name "*.pi"); do
-		decrypt_file "$file" && rm -f "$file"
-	done
 }
