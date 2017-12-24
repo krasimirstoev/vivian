@@ -88,6 +88,9 @@ case "$arg" in
 	--help|-h)
 		show_usage
 	;;
+	--encrypt|--enable-encrypt|--disable-encrypt|--rsync|--enable-rsync|--disable-rsync)
+		# boolean flags which are handled elswewhere
+	;;
 	*)
 		show_usage $arg
 		exit 1
