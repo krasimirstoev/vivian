@@ -25,5 +25,5 @@ dump_pg_databases() {
 	# execute the dump command as user "postgres"
 	# following should be in the config for sudo:
 	#     vivian ALL=(postgres) NOPASSWD: /usr/bin/pg_dumpall
-	sudo -u postgres pg_dumpall | gzip > "$storage_dir/pg/pg_all.psql.gz"
+	sudo -u postgres pg_dumpall 2>/dev/null | gzip > "$storage_dir/pg/pg_all.psql.gz"
 }
