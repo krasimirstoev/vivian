@@ -1,3 +1,6 @@
+is_function_loaded log || source logging.sh
+is_function_loaded make_sure_dir_exits || source file.sh
+
 dump_mysql_databases() {
 	# list all databases. exclude some meta ones
 	local skipped="Database|information_schema|mysql|performance_schema|phpmyadmin"
@@ -18,6 +21,7 @@ dump_mysql_databases() {
 
 dump_pg_databases() {
 	local storage_dir=$1
+	make_sure_dir_exits "$storage_dir/pg"
 	# execute the dump command as user "postgres"
 	# following should be in the config for sudo:
 	#     vivian ALL=(postgres) NOPASSWD: /usr/bin/pg_dumpall
