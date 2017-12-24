@@ -34,7 +34,7 @@ show_help() {
 	  ${c_green}--encrypt${c_reset}         - encrypt all created archives (enabled by default)
 	  ${c_green}--disable-encrypt${c_reset} - disable encryption of archives
 	  ${c_green}--rsync${c_reset}           - rsync databases with the ${c_red}remote storages${c_reset}
-	  ${c_green}--disabled-rsync${c_reset}  - disable rsync (disabled by default)
+	  ${c_green}--disable-rsync${c_reset}   - disable rsync (disabled by default)
 
 USAGE
 	exit 1
