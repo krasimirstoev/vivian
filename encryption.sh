@@ -24,6 +24,9 @@ decrypt_files() {
 			decrypt_files "$file"/*.pi
 		elif [[ -e "$file" ]]; then
 			decrypt_file "$file" && rm -f "$file"
+		else
+			echo "File \"$file\" does not exist."
+			return 1
 		fi
 	done
 }

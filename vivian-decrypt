@@ -7,6 +7,23 @@ source core.sh
 source .env
 source encryption.sh
 
-for file in "$@"; do
-	decrypt_files "$file"
+show_usage() {
+	cat <<-USAGE
+Usage: $0 <FILE OR DIRECTORY TO DECRYPT> [<ANOTHER FILE OR DIRECTORY TO DECRYPT>]...
+USAGE
+}
+
+if [[ $# -eq 0 ]]; then
+	show_usage
+	exit 1
+fi
+
+for arg in "$@"; do
+case "$arg" in
+	--help|-h)
+		show_usage
+	;;
+	*)
+		decrypt_files "$arg"
+esac
 done
